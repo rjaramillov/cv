@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ricardo Jaramillo — Software & Systems Engineer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg: #0a0e14;
+            --bg-alt: #11151c;
+            --bg-card: #161b22;
+            --text: #c9d1d9;
+            --text-bright: #ffffff;
+            --muted: #6e7681;
+            --accent: #00f0b5; /* Verde Neón */
+            --accent-2: #58a6ff; /* Azul de GitHub */
+            --border: #30363d;
+            --font-mono: 'JetBrains Mono', monospace;
+            --font-sans: 'Space Grotesk', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        ::selection { background: var(--accent); color: var(--bg); }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--bg-card); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+        .container { max-width: 1000px; margin: 0 auto; padding: 0 24px; }
+
+        /* === NAV === */
+        nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+            background: rgba(10, 14, 20, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-inner {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 16px 32px; max-width: 1000px; margin: 0 auto;
+        }
+        .logo {
+            font-family: var(--font-mono); font-weight: 700; font-size: 1.1rem;
+            color: var(--text-bright); text-decoration: none;
+        }
+        .logo span { color: var(--accent); }
+        .nav-links { display: flex; gap: 24px; list-style: none; align-items: center; }
+        .nav-links a {
+            color: var(--muted); text-decoration: none; font-size: 0.85rem;
+            font-family: var(--font-mono); transition: color 0.2s;
+        }
+        .nav-links a:hover { color: var(--accent); }
+        .nav-cta {
+            border: 1px solid var(--accent); color: var(--accent) !important;
+            padding: 8px 16px; border-radius: 4px; transition: all 0.3s;
+        }
+        .nav-cta:hover { background: var(--accent); color: var(--bg) !important; }
+        .menu-btn { display: none; background: none; border: none; color: var(--text); font-size: 1.5rem; cursor: pointer; }
+
+        /* === HERO === */
+        .hero {
+            min-height: 100vh; display: flex; align-items: center;
+            padding-top: 80px; position: relative;
+        }
+        .hero::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: radial-gradient(circle at 15% 50%, rgba(0, 240, 181, 0.05) 0%, transparent 40%),
+                              radial-gradient(circle at 85% 30%, rgba(88, 166, 255, 0.05) 0%, transparent 40%);
+            pointer-events: none;
+        }
+        
+        .hero-grid {
+            display: grid; grid-template-columns: 1.5fr 1fr; gap: 40px; align-items: center;
+            position: relative; z-index: 2; width: 100%;
+        }
+
+        .terminal-window {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 8px; width: 100%; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            overflow: hidden; margin-bottom: 30px;
+        }
+        .terminal-header {
+            background: var(--bg-alt); padding: 12px 16px;
+            display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border);
+        }
+        .dot { width: 12px; height: 12px; border-radius: 50%; }
+        .dot.red { background: #ff5f56; }
+        .dot.yellow { background: #ffbd2e; }
+        .dot.green { background: #27c93f; }
+        .terminal-title { margin-left: 16px; color: var(--muted); font-family: var(--font-mono); font-size: 0.8rem; }
+        
+        .terminal-body { padding: 24px; font-family: var(--font-mono); }
+        .term-line { margin-bottom: 12px; font-size: 0.95rem; }
+        .prompt { color: var(--accent); margin-right: 8px; }
+        .command { color: var(--text-bright); }
+        .output { color: var(--muted); margin-left: 16px; margin-bottom: 6px; font-size: 0.9rem; }
+        
+        .hero-tag {
+            display: inline-block; font-family: var(--font-mono); font-size: 0.85rem;
+            color: var(--accent-2); border: 1px solid var(--border); padding: 4px 12px;
+            border-radius: 4px; margin-bottom: 16px;
+        }
+        .hero-text h1 {
+            font-family: var(--font-sans); font-size: clamp(2rem, 4.5vw, 3.2rem);
+            font-weight: 700; color: var(--text-bright); line-height: 1.1; margin-bottom: 16px;
+        }
+        .hero-text h1 .highlight { color: var(--accent); }
+        .hero-text p {
+            font-size: 1.1rem; color: var(--muted); max-width: 600px; margin-bottom: 32px;
+        }
+        .hero-btns { display: flex; gap: 16px; flex-wrap: wrap; }
+        .btn-primary, .btn-secondary {
+            font-family: var(--font-mono); font-size: 0.9rem; font-weight: 600;
+            padding: 12px 24px; border-radius: 4px; text-decoration: none;
+            display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s; border: 1px solid transparent;
+        }
+        .btn-primary { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+        .btn-primary:hover { box-shadow: 0 0 15px rgba(0, 240, 181, 0.4); transform: translateY(-2px); }
+        .btn-secondary { background: transparent; color: var(--text-bright); border-color: var(--border); }
+        .btn-secondary:hover { border-color: var(--accent-2); color: var(--accent-2); }
+
+        /* === PHOTO CARD (NUEVA) === */
+        .photo-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 8px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            width: 100%; max-width: 320px; margin-left: auto; /* Alineado a la derecha */
+        }
+        .photo-card-header {
+            background: var(--bg-alt); padding: 10px 16px;
+            display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border);
+        }
+        .photo-card-title { margin-left: 16px; color: var(--muted); font-family: var(--font-mono); font-size: 0.8rem; }
+        
+        .photo-container {
+            width: 100%; aspect-ratio: 4/5; background: var(--bg-alt);
+            display: flex; align-items: center; justify-content: center; position: relative;
+        }
+        .photo-container img {
+            width: 100%; height: 100%; object-fit: cover; 
+            filter: grayscale(10%) contrast(1.1); /* Filtro ligero para integrar al modo tech */
+        }
+        .photo-overlay {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            background: linear-gradient(0deg, rgba(10, 14, 20, 0.9) 0%, transparent 100%);
+            padding: 20px; text-align: right;
+        }
+        .photo-overlay span {
+            font-family: var(--font-mono); color: var(--accent); font-size: 0.85rem;
+            border: 1px solid var(--accent); padding: 4px 8px; border-radius: 4px;
+            background: rgba(10, 14, 20, 0.8);
+        }
+
+        /* === SECCIONES === */
+        section { padding: 80px 0; }
+        .section-header { margin-bottom: 40px; display: flex; align-items: center; gap: 16px; }
+        .section-num { font-family: var(--font-mono); color: var(--accent); font-size: 1rem; }
+        .section-title { font-family: var(--font-sans); color: var(--text-bright); font-size: 1.8rem; font-weight: 600; border-bottom: 1px solid var(--border); padding-bottom: 8px; flex-grow: 1; }
+
+        /* === TECH STACK === */
+        .tech-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        .tech-card {
+            background: var(--bg-card); border: 1px solid var(--border); padding: 20px;
+            border-radius: 6px; transition: all 0.3s;
+        }
+        .tech-card:hover { border-color: var(--accent); transform: translateY(-4px); }
+        .tech-card h3 { color: var(--accent-2); font-family: var(--font-mono); font-size: 0.9rem; margin-bottom: 12px; }
+        .tech-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+        .tech-tag { font-family: var(--font-mono); font-size: 0.8rem; color: var(--text); background: var(--bg-alt); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border); }
+
+        /* === EXPERIENCIA === */
+        .timeline { position: relative; padding-left: 24px; border-left: 2px solid var(--border); }
+        .exp-item { margin-bottom: 40px; position: relative; }
+        .exp-item::before {
+            content: ''; position: absolute; left: -31px; top: 6px; width: 12px; height: 12px;
+            background: var(--bg); border: 2px solid var(--accent); border-radius: 50%;
+        }
+        .exp-date { font-family: var(--font-mono); color: var(--accent); font-size: 0.85rem; margin-bottom: 4px; }
+        .exp-role { font-family: var(--font-sans); color: var(--text-bright); font-size: 1.3rem; font-weight: 700; }
+        .exp-company { color: var(--muted); margin-bottom: 12px; font-size: 1rem; }
+        .exp-list { list-style: none; }
+        .exp-list li {
+            color: var(--text); margin-bottom: 8px; padding-left: 20px; position: relative;
+            font-size: 0.95rem;
+        }
+        .exp-list li::before {
+            content: '▹'; position: absolute; left: 0; color: var(--accent);
+        }
+
+        /* === REMOTE SETUP === */
+        .remote-card {
+            background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px;
+            padding: 24px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; text-align: center;
+        }
+        .remote-item i { font-size: 1.5rem; color: var(--accent-2); margin-bottom: 12px; }
+        .remote-item h4 { color: var(--text-bright); font-family: var(--font-mono); font-size: 0.9rem; margin-bottom: 4px; }
+        .remote-item p { font-size: 0.8rem; color: var(--muted); }
+
+        /* === CONTACTO === */
+        .contact-box {
+            background: var(--bg-card); border: 1px solid var(--border); padding: 40px;
+            border-radius: 8px; text-align: center;
+        }
+        .contact-box h2 { font-family: var(--font-sans); color: var(--text-bright); font-size: 2rem; margin-bottom: 16px; }
+        .contact-box p { color: var(--muted); margin-bottom: 32px; }
+        .contact-links { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+        .contact-link {
+            display: flex; align-items: center; gap: 8px; color: var(--text); text-decoration: none;
+            font-family: var(--font-mono); font-size: 0.9rem; padding: 10px 20px;
+            border: 1px solid var(--border); border-radius: 4px; transition: all 0.3s;
+        }
+        .contact-link:hover { color: var(--accent); border-color: var(--accent); }
+        .contact-link i { font-size: 1.1rem; }
+
+        footer { padding: 32px 0; text-align: center; border-top: 1px solid var(--border); margin-top: 40px; }
+        footer p { font-family: var(--font-mono); color: var(--muted); font-size: 0.8rem; }
+
+        .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .menu-btn { display: block; }
+            .nav-links.open { display: flex; flex-direction: column; position: absolute; top: 60px; right: 0; background: var(--bg-card); padding: 20px; border: 1px solid var(--border); width: 100%; }
+            .hero-grid { grid-template-columns: 1fr; gap: 30px; }
+            .photo-card { margin: 0 auto; max-width: 280px; }
+            .terminal-body { padding: 20px; }
+            .remote-card { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAV -->
+    <nav>
+        <div class="nav-inner">
+            <a href="#" class="logo">ricardo.dev<span>()</span></a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#stack">tech_stack</a></li>
+                <li><a href="#experience">experience</a></li>
+                <li><a href="#remote">remote_setup</a></li>
+                <li><a href="#contact" class="nav-cta">contact_me</a></li>
+            </ul>
+            <button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <header class="hero">
+        <div class="container">
+            <div class="hero-grid">
+                <!-- Columna Izquierda: Terminal y Texto -->
+                <div class="hero-left reveal">
+                    <div class="terminal-window">
+                        <div class="terminal-header">
+                            <div class="dot red"></div>
+                            <div class="dot yellow"></div>
+                            <div class="dot green"></div>
+                            <div class="terminal-title">root@ricardo-cv: ~</div>
+                        </div>
+                        <div class="terminal-body">
+                            <div class="term-line"><span class="prompt">$</span> <span class="command">cat profile.txt</span></div>
+                            <div class="output">> Initiating profile...</div>
+                            <div class="output">> Status: Open to remote opportunities.</div>
+                            <div class="term-line"><span class="prompt">$</span> <span class="command">./run_stack.sh</span></div>
+                            <div class="output">> Loading Web Dev, DB Management & AI... [OK]</div>
+                        </div>
+                    </div>
+
+                    <div class="hero-text">
+                        <span class="hero-tag">// Software & Systems Engineer</span>
+                        <h1>Hola, soy Ricardo. <br>Construyo <span class="highlight">soluciones software</span> y sistemas robustos.</h1>
+                        <p>Ingeniero en Telemática con +20 años de experiencia desarrollando aplicaciones web y de escritorio, gestionando bases de datos y optimizando procesos institucionales. Listo para aportar a equipos remotos de alto rendimiento.</p>
+                        <div class="hero-btns">
+                            <a href="#contact" class="btn-primary"><i class="fas fa-paper-plane"></i> Iniciar Conversación</a>
+                            <a href="#experience" class="btn-secondary"><i class="fas fa-code-branch"></i> Ver Experiencia</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Columna Derecha: Foto -->
+                <div class="hero-right reveal">
+                    <div class="photo-card">
+                        <div class="photo-card-header">
+                            <div class="dot red"></div>
+                            <div class="dot yellow"></div>
+                            <div class="dot green"></div>
+                            <div class="photo-card-title">profile.jpg</div>
+                        </div>
+                        <div class="photo-container">
+                            <!-- AQUÍ VA TU FOTO. Asegúrate de que el archivo se llame foto.jpg y esté en la misma carpeta -->
+                            <img src="foto.png" alt="Ricardo Jaramillo Velasco">
+                            <div class="photo-overlay">
+                                <span>user: rjaramillo</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- TECH STACK -->
+    <section id="stack">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-num">01.</span>
+                <h2 class="section-title">Tech Stack & Herramientas</h2>
+            </div>
+            <div class="tech-grid reveal">
+                <div class="tech-card">
+                    <h3><i class="fas fa-code"></i> Frontend & UI</h3>
+                    <div class="tech-tags">
+                        <span class="tech-tag">HTML/CSS</span>
+                        <span class="tech-tag">JavaScript</span>
+                        <span class="tech-tag">UI/UX Design</span>
+                        <span class="tech-tag">Interfaces</span>
+                    </div>
+                </div>
+                <div class="tech-card">
+                    <h3><i class="fas fa-server"></i> Backend & BD</h3>
+                    <div class="tech-tags">
+                        <span class="tech-tag">SQL / DB Management</span>
+                        <span class="tech-tag">Desktop Apps</span>
+                        <span class="tech-tag">REST APIs</span>
+                        <span class="tech-tag">Data Servers</span>
+                    </div>
+                </div>
+                <div class="tech-card">
+                    <h3><i class="fas fa-brain"></i> AI & Data</h3>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Prompt Engineering</span>
+                        <span class="tech-tag">Generative AI</span>
+                        <span class="tech-tag">Business Intelligence</span>
+                        <span class="tech-tag">Analytics</span>
+                    </div>
+                </div>
+                <div class="tech-card">
+                    <h3><i class="fas fa-users-gear"></i> Workflow & DevOps</h3>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Git</span>
+                        <span class="tech-tag">Agile</span>
+                        <span class="tech-tag">Process Automation</span>
+                        <span class="tech-tag">Jira/Trello</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- EXPERIENCIA -->
+    <section id="experience">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-num">02.</span>
+                <h2 class="section-title">Experiencia de Ingeniería</h2>
+            </div>
+            <div class="timeline reveal">
+                <div class="exp-item">
+                    <div class="exp-date">+20 AÑOS DE EXPERIENCIA</div>
+                    <div class="exp-role">IT Systems Developer & Infrastructure Lead</div>
+                    <div class="exp-company">Universidad de Colima — Recursos Humanos</div>
+                    <ul class="exp-list">
+                        <li>Desarrollo e implementación de aplicaciones de gestión internas (web y desktop) para la automatización y optimización de procesos de RRHH.</li>
+                        <li>Gestión de la instalación de servidores de datos y administración segura de bases de datos internas.</li>
+                        <li>Participación activa en la administración de procesos, cumplimiento de normativas institucionales y mejora continua de los sistemas.</li>
+                    </ul>
+                </div>
+
+                <div class="exp-item">
+                    <div class="exp-date">ACTUALMENTE</div>
+                    <div class="exp-role">Technical Instructor & Code Mentor</div>
+                    <div class="exp-company">Universidad de Colima</div>
+                    <ul class="exp-list">
+                        <li>Diseño de sílabos e impartición de asignaturas técnicas de nivel superior: Programación para Web, Diseño y Evaluación de Interfaces, Entornos Inteligentes y Tecnologías Disruptivas.</li>
+                        <li>Mentoría práctica en código, arquitectura de aplicaciones y resolución de problemas complejos a estudiantes de ingeniería.</li>
+                    </ul>
+                </div>
+
+                <div class="exp-item">
+                    <div class="exp-date">FORMACIÓN CONTINUA</div>
+                    <div class="exp-role">M.Sc. Candidate in IT Management</div>
+                    <div class="exp-company">Tecnológico de Monterrey (2024 - Actualidad)</div>
+                    <ul class="exp-list">
+                        <li>Especialización en gestión estratégica de tecnologías, escalabilidad de sistemas y transformación digital.</li>
+                        <li>Certificaciones en Prompt Engineering (Vanderbilt University) y Business Intelligence (Tecmilenio).</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- REMOTE SETUP -->
+    <section id="remote">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-num">03.</span>
+                <h2 class="section-title">Preparado para Remoto</h2>
+            </div>
+            <div class="remote-card reveal">
+                <div class="remote-item">
+                    <i class="fas fa-house-laptop"></i>
+                    <h4>Home Office Setup</h4>
+                    <p>Estación de trabajo dedicada, conexión redundante y disposición de horarios flexibles para sincronización con equipos internacionales.</p>
+                </div>
+                <div class="remote-item">
+                    <i class="fas fa-comments"></i>
+                    <h4>Comunicación Async</h4>
+                    <p>Alta competencia en comunicación escrita y verbal. Manejo fluido de Slack, Discord, Notion y metodologías de documentación técnica.</p>
+                </div>
+                <div class="remote-item">
+                    <i class="fas fa-rocket"></i>
+                    <h4>Self-Sufficiency</h4>
+                    <p>Perfil autodidacta, resolutivo y orientado a resultados. Capacidad para tomar ownership de los tickets y entregar sin necesidad de micro-gestión.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACTO -->
+    <section id="contact">
+        <div class="container">
+            <div class="contact-box reveal">
+                <h2>¿Buscas un desarrollador resolutivo?</h2>
+                <p>Mi bandeja de entrada siempre está abierta. Si tienes una oportunidad interesante o un proyecto que requiere de mi stack técnico, envíame un mensaje.</p>
+                <div class="contact-links">
+                    <a href="mailto:rjaramillovelasco@gmail.com" class="contact-link"><i class="fas fa-envelope"></i> rjaramillovelasco@gmail.com</a>
+                    <a href="https://www.linkedin.com/in/rjaramillov" target="_blank" class="contact-link"><i class="fab fa-linkedin"></i> /in/rjaramillov</a>
+                    <a href="https://github.com/rjaramillov" target="_blank" class="contact-link"><i class="fab fa-github"></i> /rjaramillov</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2025 Ricardo Jaramillo Velasco // Built with HTML, CSS & Love for Code.</p>
+    </footer>
+
+    <script>
+        // Menú móvil
+        const menuBtn = document.getElementById('menuBtn');
+        const navLinks = document.getElementById('navLinks');
+        menuBtn.addEventListener('click', () => navLinks.classList.toggle('open'));
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => navLinks.classList.remove('open'));
+        });
+
+        // Reveal on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    </script>
+</body>
+</html>
